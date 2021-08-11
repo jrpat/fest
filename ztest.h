@@ -180,7 +180,9 @@
     return ztest_runall(argc-1, argv+1);                               \
   }                                                                    \
 
-#define STREQ(a, b) (0 == strcmp((a), (b)))
+#ifndef STREQ
+# define STREQ(a, b) (0 == strcmp((a), (b)))
+#endif
 
 
 /**********************************************************************/
