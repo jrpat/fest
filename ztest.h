@@ -36,7 +36,7 @@
 **
 **  Utility Macros
 **  --------------
-**    STREQ(a, b)
+**    ZSTREQ(a, b)
 **      Compares strings a and b.
 **      Synonym for (0 == strcmp(a, b))
 **
@@ -180,9 +180,7 @@
     return ztest_runall(argc-1, argv+1);                               \
   }                                                                    \
 
-#ifndef STREQ
-# define STREQ(a, b) (0 == strcmp((a), (b)))
-#endif
+#define ZSTREQ(a, b) (0 == strcmp((a), (b)))
 
 
 /**********************************************************************/
@@ -344,7 +342,7 @@ ZT_WEAK int ztest_runall(int groupc, const char *const groupv[]) {
   } else {
     do {
       for (int i=0; i < groupc; i++) {
-        if (STREQ(groupv[i], cur->group)) { ztest_run(cur); break; }
+        if (ZSTREQ(groupv[i], cur->group)) { ztest_run(cur); break; }
       }
     } while((cur = cur->next));
   }

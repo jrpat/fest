@@ -47,7 +47,7 @@ If `groupc == 0`, `groupv` is ignored.                              <br>
 
 ## Utility Macros
 
-**`STREQ(a, b)`**                                                   <br>
+**`ZSTREQ(a, b)`**                                                  <br>
 Compares strings a and b.                                           <br>
 Synonym for `(0 == strcmp(a, b))`                                   <br>
 
