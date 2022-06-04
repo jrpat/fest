@@ -1,2 +1,8 @@
-example-default
-example-verbose
+*
+!LICENSE
+!README.md
+!Makefile
+!fest.h
+
+!*/
+!t/*.c

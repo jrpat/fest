@@ -1,29 +1,41 @@
-UNAME := $(shell uname -s)
-ifeq ($(UNAME),Darwin)
-  CC = clang
-endif
-ifeq ($(UNAME),Linux)
-  CC = gcc
-endif
+CFLAGS := -std=c99 -O0 -fPIC -Wall -Wextra -Werror -pedantic
 
-CFLAGS += -g -O0
-CFLAGS += -Wall -Wextra -Werror -pedantic
-CFLAGS += -fsanitize=undefined
-CFLAGS += -fstrict-aliasing -Wstrict-aliasing=3
+test-src := t/*.c
+test-bin := t/test
 
-example-default: example.c ztest.h
-	$(CC) -std=c11 $(CFLAGS) example.c -o example-default
-	- ./example-default
+all: $(test-bin)
+	-@$(test-bin) fail
+	-@$(test-bin) pass
 
-example-verbose: example.c ztest.h
-	$(CC) -std=c99 $(CFLAGS) example.c -o example-verbose \
-		-DZTEST_SHOW_TIMER=0 \
-		-DZTEST_SPACE_TESTS=1 \
-		-DZTEST_SHOW_PASSES=1
-	- ./example-verbose
+test-pass: $(test-bin)
+	$(test-bin) pass
 
-all: example-default example-verbose
+test-fail: $(test-bin)
+	$(test-bin) fail
+
+$(test-bin): fest.h $(test-src)
+	$(CC) $(CFLAGS) -I. $(test-src) -o $@
+
+README.md: fest.h $(test-bin) Makefile
+	@printf '> This readme is automatically generated ' >$@
+	@printf 'from `fest.h` and `t/test`. '             >>$@
+	@printf 'See `Makefile`.\n\n'                      >>$@
+	@grep '^\*\*' fest.h | sed -e 's/** \{0,2\}//'     >>$@
+	@printf "\n\n"                                     >>$@
+	@echo 'SAMPLE OUTPUT'                              >>$@
+	@echo '-------------'                              >>$@
+	@echo                                              >>$@
+	@echo 'The output of `make test-pass`:'            >>$@
+	@echo '```'                                        >>$@
+	@-$(test-bin) pass                                2>>$@
+	@echo '```'                                        >>$@
+	@echo                                              >>$@
+	@echo 'The output of `make test-fail`:'            >>$@
+	@echo '```'                                        >>$@
+	@-$(test-bin) fail                                2>>$@
+	@echo '```'                                        >>$@
+	@echo OK
 
 clean:
-	-rm example-default example-verbose  2>/dev/null
+	@rm -rf $(test-bin)
 
